@@ -1,18 +1,78 @@
 {
   "webseiten": [
     {
+      "titel": "Fachkräftesicherer unterstützen bei der Mitarbeiterbindung",
+      "screenshot": "bilder/fachkraeftesicherer.png",
+      "beschreibung": "Als Fachkräftesicherer sind wir Ansprechpartner für kleine und mittelständische Arbeitgeber (KMU) in Deutschland. Unsere Auftraggeber bekommen aus einer Hand geeignete Maßnahmen der Mitarbeiterbindung und Unterstützung ihrer strategischen Fachkräftegewinnung. Unter anderem helfen wir die Fluktuation zu senken, die Mitarbeiterzufriedenheit zu verbessern und den Krankenstand vermindern. So gelingt die Vermeidung des Fachkräftemangels kinderleicht. Wir nutzen dafür wissenschaftliche Analysemethoden, praxiserprobte Leistungen und den gesunden Menschenverstand.",
+      "link": "https://www.fachkraeftesicherer.de/"
+    },
+    {
+      "titel": "Mitarbeiterportal für den Mittelstand",
+      "screenshot": "bilder/familienfreund.png",
+      "beschreibung": "Die familienfreund KG versteht sich seit der Gründung im Mai 2006 als zentraler Ansprechpartner für alle Fragen der Mitarbeitenden und deren Angehörigen. Als Serviceunternehmen für die Vereinbarkeit von Beruf und Familie arbeiten wir im Auftrag der Personalabteilung und Geschäftsleitung als verlängerte Werkbank. Auf dieser Webseite präsentieren wir relevante Informationen für die Vereinbarkeit von Beruf und Familie für alle Altersstufen von 0 bis 99+.",
+      "link": "https://www.familienfreund.de/"
+    },
+    {
+      "titel": "Familienfreunde Deutschland",
+      "screenshot": "bilder/familienfreunde.png",
+      "beschreibung": "Die familienunterstützenden Dienstleistungen in Deutschland werden von der familienfreund KG gesammelt und können von jeder / jedem kostenlos genutzt werden. Für alle Altersgruppen von 0 bis 99+ lassen sich leistungswillige und leistungsfähige Dienstleister, von der Hebamme über die Tagesmutter/Tagesvater und den Kindergarten bis zur Altenpflege finden.",
+      "link": "https://www.familienfreunde.de/"
+    },
+    {
       "titel": "Familienbüro Leipzig",
-      "screenshot": "bilder/familienbuero-400x200.png",
-      "beschreibung": "Informationen und Angebote für Familien in Leipzig.",
+      "screenshot": "bilder/familienbuero.png",
+      "beschreibung": "Das Familienbüro Leipzig, gegründet am 3. Mai 2006 und nicht zu verwechseln mit dem Familieninfobüro entstand im Rahmen der gesellschaftlichen Verantwortung (Corporate Social Responsibility) des Arbeitgeberservice der familienfreund KG. Das Familienbüro ist die zentrale Anlaufstelle für Leipzigerinnen und Leipziger, die keinen familienfreundlichen Arbeitgeber haben. Die Leistungen dieser Anlaufstelle werden komplett ohne Steuergelder erbracht. Sie sind herzlich eingeladen, sich virtuell im FAMILIENBÜROLeipzig umzusehen.",
       "link": "https://www.familienbuero-leipzig.de/"
     }
   ],
   "tools": [
     {
-      "name": "Betreuungsplatz-Finder",
-      "screenshot": "bilder/familienfreunde-400x200.png",
-      "beschreibung": "Hilft Eltern, passende Betreuungsangebote zu finden.",
-      "link": "https://www.familienfreunde.de/"
+      "name": "familienruf - Das Ticketsystem",
+      "screenshot": "bilder/familienruf.png",
+      "beschreibung": "familienruf ist unser Support- und Ticketsystem, über das du deine Anfragen strukturiert einreichst und ihren Status jederzeit online verfolgen kannst",
+      "link": "https://www.familienruf.de/"
+    },
+    {
+      "name": "familienfreun - 1sicherer Ort für alle Datn",
+      "screenshot": "bilder/familienfreun.png",
+      "beschreibung": "familienfreun ist unser sicherer, zentraler Ablageort für deine wichtigsten Unterlagen, Dateien und Informationen, damit du alles rund um Familie und Beruf an einem Ort im Blick behältst.",
+      "link": "https://www.familienfreun.de/"
+    },
+    {
+      "name": "Familienwortschatz - Das Wiki",
+      "screenshot": "bilder/familienwortschatz.png",
+      "beschreibung": "Der Familienwortschatz ist unser Wiki, in dem du Begriffe, Abläufe und Fachwissen rund um Familie, Pflege und Vereinbarkeit nachschlagen und vertiefen kannst.",
+      "link": "https://www.familienwortschatz.de/"
+    },
+    {
+      "name": "Rechnungsportal powered by Invoice Ninja",
+      "screenshot": "bilder/rechnungsportal.png",
+      "beschreibung": "Das Rechnungsportal auf Basis von Invoice Ninja hilft uns, effizient Angebote und Rechnungen online zu erstellen und Zahlungen zu verfolgen",
+      "link": "https://v5.meinfamilienfreund.de/"
+    },
+    {
+      "name": "Familienbefrager powered by LimeSurvey",
+      "screenshot": "bilder/familienbefrager.png",
+      "beschreibung": "Mit dem Familienbefrager auf Basis von LimeSurvey können wir online Umfragen erstellen, Antworten sammeln und Auswertungen durchführen, um Feedback von Familien, Kunden oder Mitarbeitenden zu erhalten.",
+      "link": "https://www.familienruf.de/"
+    },
+    {
+      "name": "Reisekostenabrechnung",
+      "screenshot": "bilder/reise.png",
+      "beschreibung": "Die Reisekostenabrechnung unterstützt uns dabei, Dienstreisen mit allen Kosten wie Fahrt, Übernachtung und Verpflegung strukturiert zu erfassen und für die Erstattung aufzubereiten.",
+      "link": "https://reise.meinfamilienfreund.de/"
+    },
+    {
+      "name": "E-Mail-Sicherheit powered by DmarcSrg 2.3",
+      "screenshot": "bilder/dmarc.png",
+      "beschreibung": "Unser E-Mail-Sicherheitsdienst mit DmarcSrg wertet DMARC-Berichte aus, damit wir Probleme bei SPF- und DKIM-Einstellungen erkennen und unsere Domains besser vor gefälschten E-Mails schützen können.",
+      "link": "https://dmarc.meinfamilienfreund.de/public/"
+    },
+    {
+      "name": "Personal 24/7 powered by openCats",
+      "screenshot": "bilder/personal.png",
+      "beschreibung": "Personal 24/7 basiert auf dem Bewerbermanagementsystem OpenCATS und unterstützt unsere Kunden dabei, Stellenangebote zu veröffentlichen, Bewerbungen zentral zu verwalten und den gesamten Recruiting-Prozess zu steuern.",
+      "link": "https://www.personal247.de/careers/"
     }
   ]
 }
