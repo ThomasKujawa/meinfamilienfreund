@@ -1,0 +1,55 @@
+name: CI – Feature Minimal
+
+on:
+  pull_request:
+    branches:
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'maintenance/**'
+    paths:
+      - '**.php'
+      - 'composer.json'
+      - 'composer.lock'
+
+jobs:
+  php-quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          tools: composer
+          coverage: none
+          extensions: imap, json, pdo, simplexml, curl # schlägt die KI vor
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ hashFiles('**/composer.lock') }}
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Get changed PHP files
+        id: changed-files
+        run: |
+          FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.php$' || true)
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+
+      - name: Register PHPCS Problem Matcher
+        run: echo "::add-matcher::.github/phpcs-matcher.json"
+
+      - name: PHP_CodeSniffer
+        if: steps.changed-files.outputs.files != ''
+        run: |
+          php vendor/bin/phpcs --standard=PSR12 ${{ steps.changed-files.outputs.files }}
+
+      - name: PHPStan
+        if: steps.changed-files.outputs.files != ''
+        run: php vendor/bin/phpstan analyse --memory-limit=512M

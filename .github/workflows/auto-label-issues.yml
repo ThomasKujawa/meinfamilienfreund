@@ -1,0 +1,72 @@
+name: Auto-Label Issues by Title
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  auto_label:
+    if: |
+      !contains(github.event.issue.labels.*.name, 'BUG')
+      && !contains(github.event.issue.labels.*.name, 'MAINTENANCE')
+      && !contains(github.event.issue.labels.*.name, 'FEATURE')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Extract Issue Type from Title
+        id: extract
+        run: |
+          TITLE="${{ github.event.issue.title }}"
+          
+          # Prüfe auf Präfix im Titel
+          if [[ "$TITLE" =~ ^\[BUG\] ]]; then
+            echo "label=bug" >> $GITHUB_OUTPUT
+            echo "type=bug" >> $GITHUB_OUTPUT
+          elif [[ "$TITLE" =~ ^\[FEATURE\] ]]; then
+            echo "label=feature" >> $GITHUB_OUTPUT
+            echo "type=feature" >> $GITHUB_OUTPUT
+          elif [[ "$TITLE" =~ ^\[MAINTENANCE\] ]]; then
+            echo "label=maintenance" >> $GITHUB_OUTPUT
+            echo "type=maintenance" >> $GITHUB_OUTPUT
+          else
+            echo "label=" >> $GITHUB_OUTPUT
+            echo "type=unknown" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Add Label to Issue
+        if: steps.extract.outputs.label != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['${{ steps.extract.outputs.label }}']
+            });
+
+      - name: Comment on Issue (if valid)
+        if: steps.extract.outputs.type != 'unknown'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Label `${{ steps.extract.outputs.label }}` automatisch hinzugefügt basierend auf Titel-Präfix.\n\n📝 Wenn du einen PR für dieses Issue erstellst:\n- PR-Titel mit `fix:`, `feat:` oder `chore:` beginnen\n- Gleiches Label wird automatisch hinzugefügt\n- Version wird nach Merge automatisch erhöht'
+            });
+
+      - name: Comment on Issue (if invalid)
+        if: steps.extract.outputs.type == 'unknown'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ **Titel-Präfix nicht erkannt!**\n\nBitte verwende einen dieser Präfixe im Titel:\n- `[BUG]` für Bugfixes\n- `[FEATURE]` für neue Features\n- `[MAINTENANCE]` für Wartung und Refactoring\n\n**Beispiel:** `[FEATURE] PDF-Export hinzufügen`'
+            });

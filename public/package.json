@@ -1,0 +1,9 @@
+{
+  "name": "meinfamilienfreund",
+  "description": "Web-Universum der familienfreund KG",
+  "version": "0.0.1",
+  "bugs": {
+    "mail": "webmaster@familienfreund.de"
+  },
+  "homepage": "https://www.meinfamilienfreund.de"
+}

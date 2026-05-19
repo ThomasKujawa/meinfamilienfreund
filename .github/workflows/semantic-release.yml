@@ -1,0 +1,173 @@
+name: Semantic Versioning & Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master, develop]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    permissions:
+      contents: write
+      packages: write
+      pull-requests: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Install Composer dependencies (Production)
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Get PR Labels
+        id: labels
+        run: |
+          JSON='${{ toJson(github.event.pull_request.labels) }}'
+          LABELS=$(printf '%s' "$JSON" | jq -r '.[].name')
+          {
+            echo 'labels<<EOF'
+            echo "$LABELS"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Get Current Version
+        id: version
+        run: |
+          if [ -f "package.json" ]; then
+            VERSION=$(jq -r '.version' package.json | tr -d '[:space:]')
+          else
+            echo "FEHLER. Keine package.json gefunden!"
+            exit 1
+          fi
+
+          if ! echo "$VERSION" | grep -qP '^\d+\.\d+\.\d+$'; then
+            echo "FEHLER. Ungültiges Versionsformat: '$VERSION'"
+            exit 1
+          fi
+
+          echo "Version erkannt: $VERSION"
+          echo "current=$VERSION" >> $GITHUB_OUTPUT
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          echo "major=$MAJOR" >> $GITHUB_OUTPUT
+          echo "minor=$MINOR" >> $GITHUB_OUTPUT
+          echo "patch=$PATCH" >> $GITHUB_OUTPUT
+
+      - name: Calculate New Version
+        id: new_version
+        run: |
+          MAJOR=${{ steps.version.outputs.major }}
+          MINOR=${{ steps.version.outputs.minor }}
+          PATCH=${{ steps.version.outputs.patch }}
+          LABELS="${{ steps.labels.outputs.labels }}"
+
+          if echo "$LABELS" | grep -q "feature"; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            TYPE="feature"
+          elif echo "$LABELS" | grep -q "maintenance"; then
+            if echo "${{ github.event.pull_request.body }}" | grep -q "BREAKING CHANGE"; then
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              TYPE="major"
+            else
+              PATCH=$((PATCH + 1))
+              TYPE="maintenance"
+            fi
+          else
+            PATCH=$((PATCH + 1))
+            TYPE="bug"
+          fi
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "type=$TYPE" >> $GITHUB_OUTPUT
+
+      - name: Update Version Files
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.new }}"
+          jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.json.tmp
+          mv package.json.tmp package.json
+
+      # ── 1. Deploy zuerst ──────────────────────────────────────────────────
+
+      - name: Deploy & Migrations via SSH (develop → staging)
+        if: github.base_ref == 'develop'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH_STAGING }}
+            git pull origin develop
+            /usr/bin/php composer.phar install --no-dev --optimize-autoloader
+            /usr/bin/php bin/doctrine-migrations migrate -vvv --no-interaction
+
+      # ── 2. Erst nach erfolgreichem Deploy: Commit, Tag, Release ──────────
+
+      - name: Commit Version Update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: Version erhöht auf ${{ steps.new_version.outputs.new }}" || echo "Keine Änderungen zum Commit"
+
+      - name: Push Version Commit
+        run: |
+          git push origin HEAD:${{ github.base_ref }} || true
+
+      - name: Create Git Tag
+        run: |
+          TAG="v${{ steps.new_version.outputs.new }}"
+
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG existiert bereits, wird übersprungen"
+          else
+            git tag -a "$TAG" -m "Release $TAG - Type: ${{ steps.new_version.outputs.type }}"
+            git push origin "$TAG"
+          fi
+
+      - name: Create Release
+        if: github.base_ref == 'master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.new_version.outputs.new }}
+          name: Release ${{ steps.new_version.outputs.new }}
+          body: |
+            # 🚀 Release v${{ steps.new_version.outputs.new }}
+
+            **Typ:** ${{ steps.new_version.outputs.type }}
+
+            **PR:** #${{ github.event.pull_request.number }}
+            **Titel:** ${{ github.event.pull_request.title }}
+
+            **Änderungen:**
+            ${{ github.event.pull_request.body }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Output Version Footer
+        run: |
+          echo "::notice::✅ Version erfolgreich erhöht auf v${{ steps.new_version.outputs.new }}"
+          if [ "${{ github.base_ref }}" = "master" ]; then
+            echo "📦 Release-Seite: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.new_version.outputs.new }}"
+          else
+            echo "🚧 Staging-Deploy abgeschlossen (kein Release für develop)"
+          fi

@@ -1,0 +1,105 @@
+name: CI – Master Production
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+
+  ##################################################
+  # PHP QUALITY + TESTS
+  ##################################################
+  php-quality:
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.changed_files, '.php') ||
+      contains(github.event.pull_request.changed_files, 'composer.json') ||
+      contains(github.event.pull_request.changed_files, 'composer.lock')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          tools: composer
+          coverage: none
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ hashFiles('**/composer.lock') }}
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: PHPStan
+        run: php vendor/bin/phpstan analyse --memory-limit=512M
+
+      - name: CodeSniffer (PSR12)
+        run: php vendor/bin/phpcs --standard=PSR12
+
+      - name: PHPUnit
+        run: php vendor/bin/phpunit --colors=always
+
+      - name: Composer Security Audit
+        run: composer audit --no-interaction
+
+
+  ##################################################
+  # CSS & JS LINT (nur wenn Assets geändert wurden)
+  ##################################################
+  assets-lint:
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.changed_files, '.js') ||
+      contains(github.event.pull_request.changed_files, '.css')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: ESLint
+        run: npx eslint .
+
+      - name: Stylelint
+        run: npx stylelint "**/*.css"
+
+
+  ##################################################
+  # CSS MINIFY (nur wenn CSS betroffen)
+  ##################################################
+  minify-css:
+    runs-on: ubuntu-latest
+    needs: php-quality
+    if: |
+      contains(github.event.pull_request.changed_files, '.css')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Minify CSS
+        uses: nizarmah/auto-minify@v2.1
+        with:
+          directory: public/css
+
+      - name: Auto Commit Minified Files
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "CI: Auto Minified CSS for production"
+          branch: ${{ github.head_ref }}
