@@ -5,5 +5,8 @@
   "bugs": {
     "mail": "webmaster@familienfreund.de"
   },
-  "homepage": "https://www.meinfamilienfreund.de"
+  "homepage": "https://www.meinfamilienfreund.de",
+  "unternehmen": "familienfreund KG",
+  "anschrift": "Kolonnadenstraße 2, 04109 Leipzig",
+  "email": "buchhaltung@familienfreund.de"
 }

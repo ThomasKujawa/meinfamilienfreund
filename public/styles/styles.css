@@ -453,3 +453,13 @@ nav {
         grid-template-columns: 1fr;
     }
 }
+
+#widerruf {
+    border: 1px;
+    border-style: solid;
+    width: 100%;
+}
+
+#widerruf td, #widerruf th {
+    padding: 5px;
+}
