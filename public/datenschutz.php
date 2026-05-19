@@ -1,5 +1,5 @@
 <?php
-$base_url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/';
+$base_url = 'https://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']);
 ?>
     <!DOCTYPE html>
     <html lang="de-DE">
