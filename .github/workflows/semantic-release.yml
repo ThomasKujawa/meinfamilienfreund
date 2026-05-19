@@ -23,15 +23,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          coverage: none
-
-      - name: Install Composer dependencies (Production)
-        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-
       - name: Get PR Labels
         id: labels
         run: |
@@ -46,10 +37,10 @@ jobs:
       - name: Get Current Version
         id: version
         run: |
-          if [ -f "package.json" ]; then
-            VERSION=$(jq -r '.version' package.json | tr -d '[:space:]')
+          if [ -f "public/package.json" ]; then
+            VERSION=$(jq -r '.version' public/package.json | tr -d '[:space:]')
           else
-            echo "FEHLER. Keine package.json gefunden!"
+            echo "FEHLER. Keine public/package.json gefunden!"
             exit 1
           fi
 
@@ -100,23 +91,8 @@ jobs:
       - name: Update Version Files
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.new }}"
-          jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.json.tmp
-          mv package.json.tmp package.json
-
-      # ── 1. Deploy zuerst ──────────────────────────────────────────────────
-
-      - name: Deploy & Migrations via SSH (develop → staging)
-        if: github.base_ref == 'develop'
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            cd ${{ secrets.DEPLOY_PATH_STAGING }}
-            git pull origin develop
-            /usr/bin/php composer.phar install --no-dev --optimize-autoloader
-            /usr/bin/php bin/doctrine-migrations migrate -vvv --no-interaction
+          jq --arg v "$NEW_VERSION" '.version = $v' public/package.json > public/package.json.tmp
+          mv public/package.json.tmp public/package.json
 
       # ── 2. Erst nach erfolgreichem Deploy: Commit, Tag, Release ──────────
 
@@ -143,7 +119,7 @@ jobs:
           fi
 
       - name: Create Release
-        if: github.base_ref == 'master'
+        if: github.base_ref == 'main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.new_version.outputs.new }}
@@ -166,8 +142,8 @@ jobs:
       - name: Output Version Footer
         run: |
           echo "::notice::✅ Version erfolgreich erhöht auf v${{ steps.new_version.outputs.new }}"
-          if [ "${{ github.base_ref }}" = "master" ]; then
+          if [ "${{ github.base_ref }}" = "main" ]; then
             echo "📦 Release-Seite: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.new_version.outputs.new }}"
           else
-            echo "🚧 Staging-Deploy abgeschlossen (kein Release für develop)"
+            echo "🚧 kein Release, da Ziel-Branch nicht main ist"
           fi
