@@ -1,0 +1,18 @@
+{
+  "webseiten": [
+    {
+      "titel": "Familienbüro Leipzig",
+      "screenshot": "bilder/familienbuero-400x200.png",
+      "beschreibung": "Informationen und Angebote für Familien in Leipzig.",
+      "link": "https://www.familienbuero-leipzig.de/"
+    }
+  ],
+  "tools": [
+    {
+      "name": "Betreuungsplatz-Finder",
+      "screenshot": "bilder/familienfreunde-400x200.png",
+      "beschreibung": "Hilft Eltern, passende Betreuungsangebote zu finden.",
+      "link": "https://www.familienfreunde.de/"
+    }
+  ]
+}
