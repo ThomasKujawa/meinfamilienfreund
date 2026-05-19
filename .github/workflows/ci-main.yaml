@@ -1,9 +1,9 @@
-name: CI – Master Production
+name: CI – Main Production
 
 on:
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
 
