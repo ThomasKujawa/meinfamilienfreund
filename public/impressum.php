@@ -74,12 +74,13 @@ $base_url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . 
                         id="wie-lauten-die-gesetzlichen-pflichtangaben"></span>Wie lauten die
                 gesetzlichen Pflichtangaben?</h2>
             <p>vertretungsberechtigte Gesellschafter: Jana Schlegel</p>
-            <p>Kolonnadenstraße 2<br>04109 Leipzig<br>Deutschland</p>
+            <p><?= htmlspecialchars(
+                json_decode(file_get_contents(__DIR__ . '/package.json'), true)['anschrift'] ?? '') ?></p>
             <p>Telefon: <a href="tel:+4985121339380" target="_blank" data-type="tel" data-id="tel:+4985121339380"
                            rel="noreferrer noopener nofollow">+49 851 2133938-0</a></p>
             <p>Fax: 0341-355408-19</p>
-            <p>E-Mail: <a
-                        href='&#x6D;&#x61;&#x69;&#x6C;&#x74;&#x6F;&#x3A;&#x69;&#x6D;&#x70;&#x72;&#x65;&#x73;&#x73;&#x75;&#x6D;&#x40;&#x66;&#x61;&#x63;&#x68;&#x6B;&#x72;&#x61;&#x65;&#x66;&#x74;&#x65;&#x73;&#x69;&#x63;&#x68;&#x65;&#x72;&#x65;&#x72;&#x2E;&#x64;&#x65;'>&#x69;&#x6D;&#x70;&#x72;&#x65;&#x73;&#x73;&#x75;&#x6D;&#x40;&#x66;&#x61;&#x63;&#x68;&#x6B;&#x72;&#x61;&#x65;&#x66;&#x74;&#x65;&#x73;&#x69;&#x63;&#x68;&#x65;&#x72;&#x65;&#x72;&#x2E;&#x64;&#x65;</a>
+            <p>E-Mail: <?= htmlspecialchars(
+                            json_decode(file_get_contents(__DIR__ . '/package.json'), true)['email'] ?? '') ?>
             </p>
             <h3 class="gb-headline gb-headline-7a1d74e0 gb-headline-text"><span
                         id="handelsregister"></span>Handelsregister<span
@@ -108,7 +109,6 @@ $base_url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . 
                                                                 src="https://www.fachkraeftesicherer.de/wp-content/uploads/2024/06/hiscox-versichert-siegel-2024.png"
                                                                 alt="Siegel gewerbliche Versicherung Hiscox"
                                                                 class="wp-image-160199 size-full"
-                                                                srcset="https://www.fachkraeftesicherer.de/wp-content/uploads/2024/06/hiscox-versichert-siegel-2024.png 800w, https://www.fachkraeftesicherer.de/wp-content/uploads/2024/06/hiscox-versichert-siegel-2024-300x300.png 300w, https://www.fachkraeftesicherer.de/wp-content/uploads/2024/06/hiscox-versichert-siegel-2024-150x150.png 150w, https://www.fachkraeftesicherer.de/wp-content/uploads/2024/06/hiscox-versichert-siegel-2024-768x768.png 768w"
                                                                 sizes="(max-width: 800px) 100vw, 800px"/></figure>
                 <div class="wp-block-media-text__content"><p>Unser Unternehmen ist umfassend durch eine gewerbliche
                         Versicherung der <a
@@ -117,8 +117,7 @@ $base_url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . 
                         Versicherung deckt die Bereiche Vermögensschadenhaftpflicht, Betriebshaftpflicht und
                         Betriebsunterbrechung ab. Somit sind wir als Unternehmens- und Personalberatung bestens
                         geschützt und können Dir unsere Dienstleistungen mit höchster Sicherheit und Professionalität
-                        anbieten. Wir vertrauen dem Versicherungsfachmann <a attribute="about"
-                                                                             href="https://web.archive.org/web/20240805180148/https://mb-kopsch.de/ansprechpartner.html"
+                        anbieten. Wir vertrauen dem Versicherungsfachmann <a href="https://web.archive.org/web/20240805180148/https://mb-kopsch.de/ansprechpartner.html"
                                                                              target="_blank"
                                                                              rel="noreferrer noopener nofollow">Fred
                             Mängel vom Maklerbüro Kopsch</a>.</p></div>
@@ -138,7 +137,6 @@ $base_url = 'http://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . 
                                                                 src="https://www.fachkraeftesicherer.de/wp-content/uploads/2022/06/david-manifest.png"
                                                                 alt="Das David Manifest"
                                                                 class="wp-image-111595 size-full"
-                                                                srcset="https://www.fachkraeftesicherer.de/wp-content/uploads/2022/06/david-manifest.png 898w, https://www.fachkraeftesicherer.de/wp-content/uploads/2022/06/david-manifest-300x300.png 300w, https://www.fachkraeftesicherer.de/wp-content/uploads/2022/06/david-manifest-150x150.png 150w, https://www.fachkraeftesicherer.de/wp-content/uploads/2022/06/david-manifest-768x768.png 768w"
                                                                 sizes="(max-width: 898px) 100vw, 898px"/></figure>
                 <div class="wp-block-media-text__content"><p>In Anlehnung an das DAVID-Manifest vom <a
                                 href="https://www.sascha-theobald.de/" target="_blank"
